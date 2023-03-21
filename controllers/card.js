@@ -10,10 +10,9 @@ const {
 } = require("../errors/errors");
 
 const getCards = (req, res) => {
-  Card.find({})
-    .then((cards) => {
-      res.send(cards);
-    })
+  Card.find({}).then((cards) => {
+    res.send(cards);
+  });
 };
 
 const createCard = (req, res, next) => {
@@ -28,8 +27,7 @@ const createCard = (req, res, next) => {
           .status(ERROR_INTERNAL_SERVER)
           .send({ message: "На сервере произошла ошибка" });
       }
-    })
-    .catch(next);
+    });
 };
 
 const deleteCard = (req, res, next) => {
@@ -37,12 +35,12 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw res
+        return res
           .status(ERROR_NOT_FOUND)
           .send({ message: "Карточка не найдена" });
       }
       if (String(card.owner) !== req.user._id) {
-        throw res
+        return res
           .status(ERROR_FORBIDDEN)
           .send({ message: "Можно удалить только свои карточки" });
       }
@@ -58,10 +56,11 @@ const deleteCard = (req, res, next) => {
           .status(ERROR_BAD_REQUEST)
           .send({ message: "Переданы некорректные данные" });
       } else {
-        next(error);
+        return res
+          .status(ERROR_INTERNAL_SERVER)
+          .send({ message: "На сервере произошла ошибка" });
       }
-    })
-    .catch(next);
+    });
 };
 
 const likeCard = (req, res, next) => {
@@ -71,9 +70,7 @@ const likeCard = (req, res, next) => {
     { new: true }
   )
     .orFail(() => {
-      throw res
-        .status(ERROR_NOT_FOUND)
-        .send({ message: "Карточка не найдена" });
+      throw new Error("NotFound");
     })
     .then(() =>
       res.status(STATUS_OK).send({ message: "Карточке поставлен лайк" })
@@ -90,8 +87,7 @@ const likeCard = (req, res, next) => {
           .status(ERROR_INTERNAL_SERVER)
           .send({ message: "На сервере произошла ошибка" });
       }
-    })
-    .catch(next);
+    });
 };
 
 const dislikeCard = (req, res, next) => {
@@ -101,9 +97,7 @@ const dislikeCard = (req, res, next) => {
     { new: true }
   )
     .orFail(() => {
-      throw res
-        .status(ERROR_NOT_FOUND)
-        .send({ message: "Карточка не найдена" });
+      throw new Error("NotFound");
     })
     .then(() =>
       res.status(STATUS_OK).send({ message: "У карточки удален лайк" })
@@ -120,8 +114,7 @@ const dislikeCard = (req, res, next) => {
           .status(ERROR_INTERNAL_SERVER)
           .send({ message: "На сервере произошла ошибка" });
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports = { getCards, createCard, deleteCard, likeCard, dislikeCard };
