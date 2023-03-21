@@ -8,7 +8,7 @@ router.use("/users", userRouter);
 router.use("/cards", cardRouter);
 router.use("*", (req, res, next) => {
   next(
-    res.status(ERROR_NOT_FOUND).send("Страница по данному маршруту не найдена")
+    res.status(ERROR_NOT_FOUND).send({ message: "Страница по данному маршруту не найдена"})
   );
 });
 

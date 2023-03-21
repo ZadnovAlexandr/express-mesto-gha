@@ -51,7 +51,7 @@ const getUser = (req, res, next) => {
           .status(ERROR_BAD_REQUEST)
           .send({ message:"Введен некорректный ID пользователя"});
       } else if (error.name === "DocumentNotFoundError") {
-        return res.status(ERROR_NOT_FOUND).send("Пользователь не найден");
+        return res.status(ERROR_NOT_FOUND).send({ message:"Пользователь не найден"});
       } else {
         return res
           .status(ERROR_INTERNAL_SERVER)
@@ -73,7 +73,7 @@ const updateUser = (req, res, next) => {
     })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_NOT_FOUND).send("Пользователь не найден");
+        res.status(ERROR_NOT_FOUND).send({ message: "Пользователь не найден"});
       }
       res.status(STATUS_OK).send(user);
     })
@@ -81,7 +81,7 @@ const updateUser = (req, res, next) => {
       if (error.name === "ValidationError") {
         res
           .status(ERROR_BAD_REQUEST)
-          .send("Переданы некорректные данные для редактирования пользователя");
+          .send({ message: "Переданы некорректные данные для редактирования пользователя"});
       }
     })
     .catch(next);
@@ -99,7 +99,7 @@ const updateAvatar = (req, res, next) => {
     })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_NOT_FOUND).send("Пользователь не найден");
+        res.status(ERROR_NOT_FOUND).send({ message: "Пользователь не найден"});
       }
       res.status(STATUS_OK).send(user);
     })
@@ -107,7 +107,7 @@ const updateAvatar = (req, res, next) => {
       if (error.name === "ValidationError") {
         res
           .status(ERROR_BAD_REQUEST)
-          .send("Переданы некорректные данные для редактирования пользователя");
+          .send({ message: "Переданы некорректные данные для редактирования пользователя"});
       }
     })
     .catch(next);
