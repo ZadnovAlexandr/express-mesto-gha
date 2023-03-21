@@ -49,7 +49,7 @@ const getUser = (req, res, next) => {
       if (req.params.userId.length !== 24) {
         return res
           .status(ERROR_BAD_REQUEST)
-          .send("Введен некорректный ID пользователя");
+          .send({ message:"Введен некорректный ID пользователя"});
       } else if (error.name === "DocumentNotFoundError") {
         return res.status(ERROR_NOT_FOUND).send("Пользователь не найден");
       } else {
