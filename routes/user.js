@@ -1,4 +1,5 @@
-const express = require("express");
+const express = require('express');
+
 const router = express.Router();
 
 const {
@@ -7,12 +8,12 @@ const {
   getUser,
   updateUser,
   updateAvatar,
-} = require("../controllers/user");
+} = require('../controllers/user');
 
-router.get("/", getUsers);
-router.post("/", createUser);
-router.get("/:userId", getUser);
-router.patch("/me", updateUser);
-router.patch("/me/avatar", updateAvatar);
+router.get('/', getUsers);
+router.post('/', createUser);
+router.get('/:userId', getUser);
+router.patch('/me', updateUser);
+router.patch('/me/avatar', updateAvatar);
 
 module.exports = router;

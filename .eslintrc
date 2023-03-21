@@ -11,9 +11,7 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-      "no-underscore-dangle": ["error", { "allow": ["_id"]}],
-      "import/no-extraneous-dependencies": ["error", {"dependencies": false, "devDependencies": false, "optionalDependencies": false, "peerDependencies": false}]
-
+      "no-underscore-dangle": ["error", { "allow": ["_id"]}]
       }
 
 }

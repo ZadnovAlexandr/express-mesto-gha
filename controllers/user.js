@@ -1,12 +1,12 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 const {
-  STATUS_OK, //200
-  STATUS_CREATED, //201
-  ERROR_BAD_REQUEST, //400
-  ERROR_NOT_FOUND, //404
-  ERROR_INTERNAL_SERVER, //500
-} = require("../errors/errors");
+  STATUS_OK,
+  STATUS_CREATED,
+  ERROR_BAD_REQUEST,
+  ERROR_NOT_FOUND,
+  ERROR_INTERNAL_SERVER,
+} = require('../errors/errors');
 
 const getUsers = (req, res) => {
   User.find({}).then((users) => {
@@ -19,13 +19,9 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((users) => res.status(STATUS_CREATED).send(users))
     .catch((error) => {
-      if (error.name === "ValidationError") {
+      if (error.name === 'ValidationError') {
         return res.status(ERROR_BAD_REQUEST).send({ message: error.message });
-      } else {
-        return res
-          .status(ERROR_INTERNAL_SERVER)
-          .send({ message: "На сервере произошла ошибка" });
-      }
+      } return res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -34,25 +30,25 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         res.status(ERROR_NOT_FOUND).send({
-          message: "Пользователь не найден",
+          message: 'Пользователь не найден',
         });
       } else {
         res.status(STATUS_OK).send(user);
       }
     })
     .catch((error) => {
-      if (error.name === "CastError") {
+      if (error.name === 'CastError') {
         res
           .status(ERROR_BAD_REQUEST)
-          .send({ message: "Введен некорректный ID пользовател" });
-      } else if (error.message === "NotFound") {
+          .send({ message: 'Введен некорректный ID пользовател' });
+      } else if (error.message === 'NotFound') {
         res.status(ERROR_NOT_FOUND).send({
-          message: "Пользователь не найден",
+          message: 'Пользователь не найден',
         });
       } else {
         res
           .status(ERROR_INTERNAL_SERVER)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: 'На сервере произошла ошибка' });
       }
     });
 };
@@ -62,24 +58,24 @@ const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
-    .orFail(() => {
-      return res.status(ERROR_NOT_FOUND).send({ message: error.message });
+    .orFail((error) => {
+      res.status(ERROR_NOT_FOUND).send({ message: error.message });
     })
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((error) => {
-      if (error.name === "ValidationError") {
+      if (error.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({
           message:
-            "Переданы некорректные данные для редактирования пользователя",
+            'Переданы некорректные данные для редактирования пользователя',
         });
       } else {
         res
           .status(ERROR_INTERNAL_SERVER)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: 'На сервере произошла ошибка' });
       }
-    })
+    });
 };
 
 const updateAvatar = (req, res) => {
@@ -87,24 +83,26 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
-    .orFail(() => {
-      return res.status(ERROR_NOT_FOUND).send({ message: error.message });
+    .orFail((error) => {
+      res.status(ERROR_NOT_FOUND).send({ message: error.message });
     })
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((error) => {
-      if (error.name === "ValidationError") {
+      if (error.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({
           message:
-            "Переданы некорректные данные для редактирования пользователя",
+            'Переданы некорректные данные для редактирования пользователя',
         });
       } else {
         res
           .status(ERROR_INTERNAL_SERVER)
-          .send({ message: "На сервере произошла ошибка" });
+          .send({ message: 'На сервере произошла ошибка' });
       }
-    })
+    });
 };
 
-module.exports = { createUser, getUsers, getUser, updateUser, updateAvatar };
+module.exports = {
+  createUser, getUsers, getUser, updateUser, updateAvatar,
+};
