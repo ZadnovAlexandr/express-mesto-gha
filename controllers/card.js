@@ -9,19 +9,11 @@ const {
   ERROR_INTERNAL_SERVER, //500
 } = require("../errors/errors");
 
-const getCards = (req, res, next) => {
+const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send(cards))
-    .catch((error) => {
-      if (error.name === "ValidationError") {
-        return res.status(ERROR_BAD_REQUEST).send({ message: error.message });
-      } else {
-        return res
-          .status(ERROR_INTERNAL_SERVER)
-          .send({ message: "На сервере произошла ошибка" });
-      }
+    .then((cards) => {
+      res.send(cards);
     })
-    .catch(next);
 };
 
 const createCard = (req, res, next) => {
