@@ -45,18 +45,29 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw res.status(ERROR_NOT_FOUND).send({ message: "Карточка не найдена"});
+        throw res
+          .status(ERROR_NOT_FOUND)
+          .send({ message: "Карточка не найдена" });
       }
       if (String(card.owner) !== req.user._id) {
         throw res
           .status(ERROR_FORBIDDEN)
-          .send({ message: "Можно удалить только свои карточки"});
+          .send({ message: "Можно удалить только свои карточки" });
       }
       Card.deleteOne({ _id: card._id })
         .then(() => {
           res.status(STATUS_OK).send({ card });
         })
         .catch(next);
+    })
+    .catch((error) => {
+      if (error.name === "CastError") {
+          res
+            .status(ERROR_NOT_FOUND)
+            .send({ message: "Переданы некорректные данные" })
+      } else {
+        next(error);
+      }
     })
     .catch(next);
 };
@@ -68,9 +79,13 @@ const likeCard = (req, res, next) => {
     { new: true }
   )
     .orFail(() => {
-      throw res.status(ERROR_NOT_FOUND).send({ message: "Карточка не найдена"});
+      throw res
+        .status(ERROR_NOT_FOUND)
+        .send({ message: "Карточка не найдена" });
     })
-    .then(() => res.status(STATUS_OK).send({ message: "Карточке поставлен лайк"}))
+    .then(() =>
+      res.status(STATUS_OK).send({ message: "Карточке поставлен лайк" })
+    )
     .catch((error) => {
       if (error.name === "CastError") {
         res.status(ERROR_BAD_REQUEST).send({ message: error.message });
@@ -94,9 +109,13 @@ const dislikeCard = (req, res, next) => {
     { new: true }
   )
     .orFail(() => {
-      throw res.status(ERROR_NOT_FOUND).send({ message: "Карточка не найдена"});
+      throw res
+        .status(ERROR_NOT_FOUND)
+        .send({ message: "Карточка не найдена" });
     })
-    .then(() => res.status(STATUS_OK).send({ message: "У карточки удален лайк"}))
+    .then(() =>
+      res.status(STATUS_OK).send({ message: "У карточки удален лайк" })
+    )
     .catch((error) => {
       if (error.name === "CastError") {
         res.status(ERROR_BAD_REQUEST).send({ message: error.message });
