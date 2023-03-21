@@ -62,9 +62,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === "CastError") {
-          res
-            .status(ERROR_NOT_FOUND)
-            .send({ message: "Переданы некорректные данные" })
+        res
+          .status(ERROR_BAD_REQUEST)
+          .send({ message: "Переданы некорректные данные" });
       } else {
         next(error);
       }
