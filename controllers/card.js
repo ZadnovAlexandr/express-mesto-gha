@@ -4,7 +4,6 @@ const {
   STATUS_OK,
   STATUS_CREATED,
   ERROR_BAD_REQUEST,
-  ERROR_FORBIDDEN,
   ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
 } = require('../errors/errors');
@@ -12,7 +11,10 @@ const {
 const getCards = (req, res) => {
   Card.find({}).then((cards) => {
     res.send(cards);
-  });
+  })
+    .catch((error) => {
+      res.status(ERROR_INTERNAL_SERVER).send({ message: error.message });
+    });
 };
 
 const createCard = (req, res) => {
@@ -29,25 +31,23 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.findById(cardId)
-    .then((card) => {
-      if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-      }
-      if (String(card.owner) !== req.user._id) {
-        res.status(ERROR_FORBIDDEN).send({ message: 'Можно удалить только свои карточки' });
-      }
-      Card.deleteOne({ _id: card._id })
-        .then(() => {
-          res.status(STATUS_OK).send({ card });
-        });
+  Card.findByIdAndDelete(cardId)
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
+    .then((result) => {
+      res.send(result);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        res
-          .status(ERROR_BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные' });
-      } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else if (error.message === 'NotFound') {
+        res.status(ERROR_NOT_FOUND).send({
+          message: 'Пользователь с указанным id не найден',
+        });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+      }
     });
 };
 
