@@ -11,7 +11,10 @@ const {
 const getUsers = (req, res) => {
   User.find({}).then((users) => {
     res.send(users);
-  });
+  })
+    .catch((error) => {
+      res.status(ERROR_INTERNAL_SERVER).send({ message: error.message });
+    });
 };
 
 const createUser = (req, res) => {
@@ -41,10 +44,6 @@ const getUser = (req, res) => {
         res
           .status(ERROR_BAD_REQUEST)
           .send({ message: 'Введен некорректный ID пользовател' });
-      } else if (error.message === 'NotFound') {
-        res.status(ERROR_NOT_FOUND).send({
-          message: 'Пользователь не найден',
-        });
       } else {
         res
           .status(ERROR_INTERNAL_SERVER)
@@ -60,9 +59,7 @@ const updateUser = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail((error) => {
-      res.status(ERROR_NOT_FOUND).send({ message: error.message });
-    })
+    .orFail()
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -70,6 +67,8 @@ const updateUser = (req, res) => {
           message:
             'Переданы некорректные данные для редактирования пользователя',
         });
+      } else if (error.name === 'DocumentNotFoundError') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else {
         res
           .status(ERROR_INTERNAL_SERVER)
@@ -85,16 +84,16 @@ const updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .orFail((error) => {
-      res.status(ERROR_NOT_FOUND).send({ message: error.message });
-    })
+    .orFail()
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({
           message:
-            'Переданы некорректные данные для редактирования пользователя',
+          'Переданы некорректные данные для редактирования пользователя',
         });
+      } else if (error.name === 'DocumentNotFoundError') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else {
         res
           .status(ERROR_INTERNAL_SERVER)

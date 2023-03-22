@@ -43,7 +43,7 @@ const deleteCard = (req, res) => {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else if (error.message === 'NotFound') {
         res.status(ERROR_NOT_FOUND).send({
-          message: 'Пользователь с указанным id не найден',
+          message: 'Карточка с указанным id не найдена',
         });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
