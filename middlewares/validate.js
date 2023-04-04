@@ -16,6 +16,15 @@ const createUsersVal = celebrate({
     password: Joi.string().required().messages({
       'any.require': 'Введен некорректный пароль',
     }),
+    name: Joi.string().min(2).max(30).messages({
+      'any.require': 'Введено некорректное имя пользователя',
+    }),
+    about: Joi.string().min(2).max(30).messages({
+      'any.require': 'Введена некорректная профессия пользователя',
+    }),
+    avatar: Joi.string().pattern(urlRegExp).messages({
+      'any.require': 'Введена некорректная ссылка аватара пользователя',
+    }),
   }),
 });
 
