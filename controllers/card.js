@@ -91,8 +91,9 @@ const dislikeCard = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new ErrorBadRequest('Переданы некорректные данные'));
-      } else if (error.name === 'NotFound') {
+      } else if (error.name === 'DocumentNotFoundError') {
         next(new ErrorNotFound('Карточка с указанным id не найдена'));
+        console.log(error.name);
       } else {
         next(new ErrorInternalServer('На сервере произошла ошибка'));
       }
