@@ -1,7 +1,5 @@
 const Card = require('../models/card');
 
-const { STATUS_OK } = require('../errors/errors');
-
 const ErrorBadRequest = require('../errors/ErrorBadRequest');
 const ErrorInternalServer = require('../errors/ErrorInternalServer');
 const ErrorNotFound = require('../errors/ErrorNotFound');
@@ -64,15 +62,16 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
+    .orFail()
+    .then((card) => {
+      res.send(card);
     })
-    .then(() => res.status(STATUS_OK).send({ message: 'Карточке поставлен лайк' }))
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new ErrorBadRequest('Переданы некорректные данные'));
       } else if (error.name === 'DocumentNotFoundError') {
         next(new ErrorNotFound('Карточка с указанным id не найдена'));
+        console.log(error.name);
       } else {
         next(new ErrorInternalServer('На сервере произошла ошибка'));
       }
@@ -85,14 +84,14 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
+    .orFail()
+    .then((card) => {
+      res.send(card);
     })
-    .then(() => res.status(STATUS_OK).send({ message: 'У карточки удален лайк' }))
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new ErrorBadRequest('Переданы некорректные данные'));
-      } else if (error.name === 'DocumentNotFoundError') {
+      } else if (error.name === 'NotFound') {
         next(new ErrorNotFound('Карточка с указанным id не найдена'));
       } else {
         next(new ErrorInternalServer('На сервере произошла ошибка'));
