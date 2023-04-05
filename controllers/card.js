@@ -20,8 +20,9 @@ const createCard = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ErrorBadRequest('Переданы некорректные данные'));
+      } else {
+        next(new ErrorInternalServer('На сервере произошла ошибка'));
       }
-      next(new ErrorInternalServer('На сервере произошла ошибка'));
     });
 };
 
@@ -71,7 +72,6 @@ const likeCard = (req, res, next) => {
         next(new ErrorBadRequest('Переданы некорректные данные'));
       } else if (error.name === 'DocumentNotFoundError') {
         next(new ErrorNotFound('Карточка с указанным id не найдена'));
-        console.log(error.name);
       } else {
         next(new ErrorInternalServer('На сервере произошла ошибка'));
       }
@@ -93,7 +93,6 @@ const dislikeCard = (req, res, next) => {
         next(new ErrorBadRequest('Переданы некорректные данные'));
       } else if (error.name === 'DocumentNotFoundError') {
         next(new ErrorNotFound('Карточка с указанным id не найдена'));
-        console.log(error.name);
       } else {
         next(new ErrorInternalServer('На сервере произошла ошибка'));
       }
